@@ -1,0 +1,563 @@
+
+
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>研究参加の説明文書と同意確認</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #b91c1c;
+      --ok: #15803d;
+      --shadow: 0 18px 55px rgba(15, 23, 42, 0.18);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 42%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 20px 28px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 5px 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      color: #1e40af;
+      background: #eff6ff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.18;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto 64px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+      padding: 28px;
+      margin: 20px 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    button, .button-like {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform .08s ease, background .2s ease, opacity .2s ease;
+    }
+
+    button:active { transform: translateY(1px); }
+    .primary { background: var(--primary); color: white; }
+    .primary:hover { background: var(--primary-dark); }
+    .secondary { background: #e5e7eb; color: #111827; }
+    .danger { background: #fee2e2; color: var(--danger); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.62);
+      z-index: 1000;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .modal {
+      width: min(980px, 100%);
+      max-height: 92vh;
+      display: grid;
+      grid-template-rows: auto minmax(260px, 1fr) auto;
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .modal-header, .modal-footer {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+      background: #f9fafb;
+    }
+
+    .modal-title {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-title h2 { margin: 0; font-size: 22px; line-height: 1.3; }
+    .close { background: transparent; color: var(--muted); padding: 4px 8px; font-size: 26px; }
+
+    .agreement-body {
+      overflow: auto;
+      padding: 24px;
+      scroll-behavior: smooth;
+    }
+
+    .agreement-body h3 {
+      margin: 28px 0 8px;
+      padding-top: 6px;
+      font-size: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .agreement-body h3:first-child { margin-top: 0; border-top: 0; }
+    .agreement-body p { margin: 10px 0; }
+
+    .summary-box {
+      border-left: 5px solid var(--primary);
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 0 0 18px;
+    }
+
+    .notice-box {
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+
+    .notice-box h3 {
+      margin: 0 0 10px;
+      padding-top: 0;
+      border-top: 0;
+      font-size: 20px;
+    }
+
+    .notice-list {
+      margin: 0;
+      padding-left: 1.4em;
+    }
+
+    .notice-list li + li {
+      margin-top: 10px;
+    }
+
+    .checks {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    label.check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    input[type="checkbox"] { width: 18px; height: 18px; margin-top: 4px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    input[type="text"], input[type="email"], input[type="date"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 15px;
+    }
+
+    .status {
+      min-height: 24px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--danger); }
+
+    .result {
+      display: none;
+      border-left: 5px solid var(--ok);
+      background: #ecfdf5;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .result.show { display: block; }
+
+    .small { color: var(--muted); font-size: 13px; }
+    .required { color: var(--danger); }
+    .hidden-field { display: none; }
+
+    @media (max-width: 720px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+      .modal-header, .modal-footer, .agreement-body { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="eyebrow">研究参加前の確認</span>
+    <h1>研究説明文書と同意確認</h1>
+    <p class="lead">
+      「人、経験、選好および行動・対話履歴をもとに対話するシステムの評価」への参加にあたり、
+      説明文書を確認し、同意内容を選択してください。
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <p>
+        下のボタンから、研究と実験に関する説明文書をご確認ください。<br>
+        最後まで確認すると、同意して実験ページへ進むボタンを押せるようになります。<br>
+        同意するかしないかは参加者様の自由です。同意しない場合はこのままブラウザを閉じてください。
+      </p>
+
+      <div class="actions">
+        <button class="primary" id="openAgreement">説明文書を確認して同意へ進む</button>
+      </div>
+      <div id="result" class="result" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="agreementTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">
+          <div>
+            <h2 id="agreementTitle">研究説明文書・同意確認</h2>
+            <div class="small">最後までスクロールすると同意入力欄が有効になります。</div>
+          </div>
+          <button class="close" id="closeModal" aria-label="閉じる">&times;</button>
+        </div>
+      </div>
+
+      <div class="agreement-body" id="agreementBody" tabindex="0">
+        <div class="summary-box">
+          本研究は、社会的な場面で継続的に人と関わることのできる対話システムの開発、およびそのためのデータ収集を目的とします。
+        </div>
+
+        <h3>研究へのご協力のお願い</h3>
+        <p>研究責任者: 大阪大学大学院基礎工学研究科 教授 石黒 浩</p>
+        <p>説明者/実験者: 磯和 隆道</p>
+
+        <h3>1. 研究の目的、手順および実験に伴う危険性と対応</h3>
+        <p>
+          本研究は社会的な場面で継続的に人と関わることのできる対話システムの開発、およびそのためのデータ収集を目的とし、「基礎工学研究科における人を対象とした研究に関する倫理委員会」より承認を受けました。<br>
+          本研究では、計算課題や単語列挙課題を行い、課題での回答ならびにアンケートの結果を記録します。
+          また、課題中に二人の会話が発生します。提供された情報、アンケート、インタビュー等を研究目的で記録・分析します。
+        </p>
+        <p>
+          課題を通して得られた情報は、個人が特定されない形でシステムに使用される場合があります。
+          年齢や性別など個人を特定できる情報を使用する場合は、取得情報の種類や公開範囲について事前に十分説明し、
+          同意が得られている場合に限ります。
+        </p>
+        <p>
+          一度の実験は十分程度です。実験開始後も、いつでも実験を終了できます。
+        </p>
+        <p>
+          実験で流れる発話内容は事前に複数の人間が確認し、心理的負荷の可能性に配慮します。
+          また、実験の影響で健康被害が生じた場合には、できる限り誠意をもって対応します。
+        </p>
+
+        <h3>2. 実験の中止</h3>
+        <p>
+          実験に不安を感じた場合、また途中で気分が悪くなった場合は、ブラウザを閉じることで速やかに実験を中止できます。
+        </p>
+
+        <h3>3. 不利益や個人情報への配慮</h3>
+        <p>
+          研究対象者になることに同意するかどうかは自由です。同意しない場合でも不利益を受けることはありません。
+          同意後も、自由意志でいつでも辞退できます。
+        </p>
+        <p>
+          年齢や性別等、個人を特定できる情報および実験データは、研究責任者が基礎工学研究科において厳重に保管し、
+          プライバシーの確保に責任を負います。研究対象者の不利益への配慮は、学問的・社会的利益よりも優先されます。
+        </p>
+        <p>
+          実験結果は専用記録媒体に格納し、大阪大学内で厳重に保管します。個人情報は、その他の個人情報や実験データと関連付けされない形で保管し、
+          分別保護に努めます。
+        </p>
+        <p>
+          本研究の一部は文部科学省「Society 5.0実現化研究拠点支援事業」大阪大学ライフデザイン・イノベーション研究拠点（iLDi）から資金を受けて実施しています。
+        </p>
+        <p>
+          実験データを本研究目的以外に利用することはありません。
+        </p>
+
+        <h3>4. 不利益に対する申し立て</h3>
+        <p>
+          万一本研究によって不利益をこうむったと判断した場合、また実験データを削除したい場合は、
+          大阪大学基礎工学研究科に申し立てを行うことができます。
+        </p>
+        <p>
+          申立先: 560-8531 大阪府豊中市待兼山町1-3<br>
+          大阪大学大学院基礎工学研究科 磯和 隆道 <br>
+          Mail: isowa.takamichi@irl.sys.es.osaka-u.ac.jp
+        </p>
+
+        <h3>同意入力</h3>
+        <p class="small"><span class="required">*</span> は必須項目です。</p>
+        <div class="hidden-field">
+          <input id="name" type="text" value="">
+          <input id="email" type="email" value="">
+          <input id="birthdate" type="date" value="">
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="consentDate">同意日</label>
+            <input id="consentDate" type="date" disabled>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="checks">
+          <label class="check">
+            <input id="readCheck" type="checkbox" disabled>
+            <span>説明文書を最後まで確認しました。<span class="required">*</span></span>
+          </label>
+          <label class="check">
+            <input id="mainConsent" type="checkbox" disabled>
+            <span>私は自らの自由意志により、本研究の実験の被験者になることに同意します。<span class="required">*</span></span>
+          </label>
+        </div>
+        <div class="status warn" id="status">説明文書を最後までスクロールしてください。</div>
+        <div class="actions" style="justify-content:flex-end; margin-top: 10px;">
+          <button class="secondary" id="cancelButton">同意しない</button>
+          <button class="primary" id="submitButton" disabled>同意して進む</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="noticeBackdrop" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
+    <div class="modal" style="width: min(760px, 100%);">
+      <div class="modal-header">
+        <div class="modal-title">
+          <div>
+            <h2 id="noticeTitle">実験前の注意事項</h2>
+            <div class="small">内容をご確認のうえ、準備ができたら開始してください。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="agreement-body">
+        <div class="notice-box">
+          <h3>【注意事項】</h3>
+          <ul class="notice-list">
+            <li>実験中、音が流れることがありますので、<strong>音が十分聞こえる静かな環境</strong>で実施してください。</li>
+            <li>キーボード操作が必要になります。キーボード操作が可能な環境でご参加ください。</li>
+            <li>ページ遷移時に緑のメニューボックスが表示されます。まずはクラウドワークスIDを入力し、少し待つと「OK」ボタンが表示されるので押下して開始してください。場合によっては時間がかかる場合がございますのでご了承ください。</li>
+            <li>ページ遷移中、実験中はご自身の判断で実験を辞退される場合を除き、<strong>ブラウザの更新ボタンや戻る/進むボタンを押下しない</strong>でください。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="actions" style="justify-content:flex-end; margin-top: 0;">
+          <button class="secondary" id="backToConsentButton">同意画面に戻る</button>
+          <button class="primary" id="startExperimentButton">実験ページへ進む</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const openAgreement = document.getElementById('openAgreement');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const noticeBackdrop = document.getElementById('noticeBackdrop');
+    const closeModal = document.getElementById('closeModal');
+    const cancelButton = document.getElementById('cancelButton');
+    const backToConsentButton = document.getElementById('backToConsentButton');
+    const startExperimentButton = document.getElementById('startExperimentButton');
+    const agreementBody = document.getElementById('agreementBody');
+    const statusEl = document.getElementById('status');
+    const submitButton = document.getElementById('submitButton');
+    const result = document.getElementById('result');
+    const experimentUrl = 'https://run.pavlovia.org/Isowa/ExperimentPart2_Filler';
+
+    const fields = ['consentDate', 'readCheck', 'mainConsent']
+      .map(id => document.getElementById(id));
+
+    function todayIso() {
+      const d = new Date();
+      const offset = d.getTimezoneOffset();
+      const local = new Date(d.getTime() - offset * 60 * 1000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function openModal() {
+      modalBackdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('consentDate').value = todayIso();
+      agreementBody.focus();
+      validate();
+    }
+
+    function hideModal() {
+      modalBackdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function openNoticeModal() {
+      noticeBackdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideNoticeModal() {
+      noticeBackdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function enableConsentArea() {
+      fields.forEach(el => {
+        el.disabled = false;
+      });
+      document.getElementById('consentDate').disabled = true;
+      document.getElementById('readCheck').checked = true;
+      statusEl.textContent = '確認済みです。必須項目を入力してください。';
+      statusEl.className = 'status ok';
+      validate();
+    }
+
+    function hasScrolledToBottom() {
+      return agreementBody.scrollTop + agreementBody.clientHeight >= agreementBody.scrollHeight - 12;
+    }
+
+    function validate() {
+      const readOk = document.getElementById('readCheck').checked;
+      const consentOk = document.getElementById('mainConsent').checked;
+      submitButton.disabled = !(readOk && consentOk);
+    }
+
+    agreementBody.addEventListener('scroll', () => {
+      if (hasScrolledToBottom()) enableConsentArea();
+    });
+
+    fields.forEach(el => el.addEventListener('input', validate));
+    fields.forEach(el => el.addEventListener('change', validate));
+
+    openAgreement.addEventListener('click', openModal);
+    closeModal.addEventListener('click', hideModal);
+
+    cancelButton.addEventListener('click', () => {
+      result.classList.add('show');
+      result.innerHTML = '<strong>同意しない</strong><br>研究参加への同意は記録されませんでした。';
+      hideModal();
+    });
+
+    submitButton.addEventListener('click', () => {
+      const payload = {
+        consentDate: document.getElementById('consentDate').value,
+        mainConsent: document.getElementById('mainConsent').checked,
+        acceptedAt: new Date().toISOString()
+      };
+
+      console.log('consent payload:', payload);
+
+      result.classList.add('show');
+      result.innerHTML = `
+        <strong>同意内容を受け付けました。</strong><br>
+        同意日: ${escapeHtml(payload.consentDate)}<br>
+        注意事項をご確認のうえ、実験ページへ進んでください。
+      `;
+      hideModal();
+      openNoticeModal();
+    });
+
+    backToConsentButton.addEventListener('click', () => {
+      hideNoticeModal();
+      openModal();
+    });
+
+    startExperimentButton.addEventListener('click', () => {
+      window.location.href = experimentUrl;
+    });
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>'"]/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[c]));
+    }
+
+    modalBackdrop.addEventListener('click', event => {
+      if (event.target === modalBackdrop) hideModal();
+    });
+
+    noticeBackdrop.addEventListener('click', event => {
+      if (event.target === noticeBackdrop) hideNoticeModal();
+    });
+  </script>
+</body>
+</html>
